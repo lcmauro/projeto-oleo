@@ -6,13 +6,9 @@ typedef struct {
     int mes;
     int ano;
     float quantidade;
-} Coleta;
 
-typedef struct {
-    int mes;
-    int ano;
-    float total;
-} TotalMensal;
+    char arquivo[11]; // dd/mm/aaaa
+} Coleta;
 
 void importarLote();
 void excluirLote();
