@@ -58,12 +58,113 @@ void excluirLote()
 
 void relatorioGeral()
 {
-    // to do
-    printf("Funcao relatorio geral\n");
+    FILE *bin;
+    FILE *csv;
+
+    bin = fopen("coletas.bin", "rb");
+
+    if (bin == NULL)
+    {
+        printf("Arquivo binario nao encontrado!\n");
+        return;
+    }
+
+    csv = fopen("relatorio_geral.csv", "w");
+
+    if (csv == NULL)
+    {
+        printf("Erro ao criar CSV!\n");
+        fclose(bin);
+        return;
+    }
+
+    Coleta coleta;
+
+    fprintf(csv, "Dia;Mes;Ano;Quantidade\n");
+
+    while (fread(&coleta,
+                 sizeof(Coleta),
+                 1,
+                 bin) == 1)
+    {
+        fprintf(csv,
+                "%d;%d;%d;%.2f\n",
+                coleta.dia,
+                coleta.mes,
+                coleta.ano,
+                coleta.quantidade);
+    }
+
+    fclose(bin);
+    fclose(csv);
+
+    printf("Relatorio geral gerado com sucesso!\n");
 }
 
 void relatorioMensal()
 {
-    // to do
-    printf("Funcao relatorio mensal\n");
+    FILE *bin;
+    FILE *csv;
+
+    bin = fopen("coletas.bin", "rb");
+
+    if(bin == NULL)
+    {
+        printf("Arquivo binario nao encontrado!\n");
+        return;
+    }
+
+    csv = fopen("relatorio_mensal.csv", "w");
+
+    if(csv == NULL)
+    {
+        printf("Erro ao criar CSV!\n");
+        fclose(bin);
+        return;
+    }
+
+    TotalMensal totais[100];
+    int qtdMeses = 0;
+
+    Coleta coleta;
+
+    while(fread(&coleta, sizeof(Coleta), 1, bin) == 1)
+    {
+        int encontrou = 0;
+
+        for(int i = 0; i < qtdMeses; i++)
+        {
+            if(totais[i].mes == coleta.mes &&
+               totais[i].ano == coleta.ano)
+            {
+                totais[i].total += coleta.quantidade;
+                encontrou = 1;
+                break;
+            }
+        }
+
+        if(!encontrou)
+        {
+            totais[qtdMeses].mes = coleta.mes;
+            totais[qtdMeses].ano = coleta.ano;
+            totais[qtdMeses].total = coleta.quantidade;
+            qtdMeses++;
+        }
+    }
+
+    fprintf(csv, "Mes;Ano;Total\n");
+
+    for(int i = 0; i < qtdMeses; i++)
+    {
+        fprintf(csv,
+                "%d;%d;%.2f\n",
+                totais[i].mes,
+                totais[i].ano,
+                totais[i].total);
+    }
+
+    fclose(bin);
+    fclose(csv);
+
+    printf("Relatorio mensal gerado com sucesso!\n");
 }

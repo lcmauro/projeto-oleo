@@ -8,6 +8,12 @@ typedef struct {
     float quantidade;
 } Coleta;
 
+typedef struct {
+    int mes;
+    int ano;
+    float total;
+} TotalMensal;
+
 void importarLote();
 void excluirLote();
 void relatorioGeral();
